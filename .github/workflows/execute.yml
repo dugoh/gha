@@ -1,4 +1,4 @@
-name: Lint Code Base
+name: Execute Code Base
 on:
   push:
     branches-ignore: [scratch]
