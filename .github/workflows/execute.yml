@@ -15,6 +15,5 @@ jobs:
         shell: bash
       - name: Execute main script file
         run: |
-           sed -i -e's/\x0D$//' ./*.sh
-           chmod +x ./*.sh
+           ./script.sh
         shell: bash
