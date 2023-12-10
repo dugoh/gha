@@ -4,7 +4,7 @@ on:
   push:
     branches-ignore: [scratch]
 jobs:
-  lint:
+  run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
