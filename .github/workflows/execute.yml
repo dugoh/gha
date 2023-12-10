@@ -1,0 +1,20 @@
+name: Lint Code Base
+on:
+  push:
+    branches-ignore: [scratch]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Prepare script files
+        run: |
+           sed -i -e's/\x0D$//' ./*.sh
+           chmod +x ./*.sh
+        shell: bash
+      - name: Execute main script file
+        run: |
+           sed -i -e's/\x0D$//' ./*.sh
+           chmod +x ./*.sh
+        shell: bash
