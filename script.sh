@@ -187,6 +187,12 @@ cat >1 <<__EOF
 __EOF
 
 touch out
+
+pwd
+find ./
+uname -a
+id
+
 (
   until egrep -q '#|werase' out ; do
     sleep 5
