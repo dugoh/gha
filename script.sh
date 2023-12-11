@@ -57,6 +57,8 @@ function push {
 }
 
 wd=$(pwd)
+echo $wd
+echo m00!
 
 # R.I.P. bochs, latest SVN, does not build anymore
 # bochs_src=https://svn.code.sf.net/p/bochs/code/trunk
