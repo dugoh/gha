@@ -152,7 +152,7 @@ check configuring bochs;               ./configure                              
                                          --with-nogui                                   \
                                          --enable-all-optimizations                     \
                                          --enable-docbook=no                            >/dev/null 2>&1 && ok || nok
-check building bochs;                  make                                             >/dev/null 2>&1 && ok || nok
+check building bochs;                  make                                             >x.ooo 2>&1 && ok || nok
 check installing bochs;                sudo make install                                >/dev/null 2>&1 && ok || nok
 cd ..
 check tarring up bochs;                tar -cvf bochs.tar ./bochs                       >/dev/null 2>&1 && ok || nok
@@ -182,6 +182,9 @@ check boot floppy;                     (sudo cat ${ftproot}/${flop};            
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
 )|format
 
+echo %%%%%%%%%%%%% bochsstuff
+cat x.ooo
+echo %%%%%%%%%%%%% bochsstuff
 
 # first boot ##########################
 cat >1 <<__EOF
@@ -195,7 +198,7 @@ pwd
 echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ls -ld `pwd`
 echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-find ./
+#find ./
 echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 uname -a
 echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
