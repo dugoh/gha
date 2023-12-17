@@ -17,5 +17,4 @@ jobs:
       - name: Execute main script file
         run: |
            ./init.sh
-           ./script.sh
         shell: bash
