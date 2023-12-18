@@ -144,6 +144,7 @@ check getting bochs sources;           git clone "${bochs_src}"                 
 check checking bochs sources;          cd bochs                                         >/dev/null 2>&1 && ok || nok
 check reverting to last known good;    git reset --hard "${reset_to}"                   >/dev/null 2>&1 && ok || nok
 cd bochs
+                                       ./configure --help                               >x.ooo
 check configuring bochs;               ./configure                                      \
                                          --enable-cpu-level=3                           \
                                          --enable-fpu                                   \
@@ -152,7 +153,7 @@ check configuring bochs;               ./configure                              
                                          --with-nogui                                   \
                                          --enable-all-optimizations                     \
                                          --enable-docbook=no                            >/dev/null 2>&1 && ok || nok
-check building bochs;                  make                                             >x.ooo 2>&1 && ok || nok
+check building bochs;                  make                                             >>x.ooo 2>&1 && ok || nok
 check installing bochs;                sudo make install                                >/dev/null 2>&1 && ok || nok
 cd ..
 check tarring up bochs;                tar -cvf bochs.tar ./bochs                       >/dev/null 2>&1 && ok || nok
