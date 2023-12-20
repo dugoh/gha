@@ -145,6 +145,8 @@ check checking bochs sources;          cd bochs                                 
 check reverting to last known good;    git reset --hard "${reset_to}"                   >/dev/null 2>&1 && ok || nok
 cd bochs
                                        ./configure --help                               >x.ooo
+                                       find ./ -name cksum.cc                           >>x.ooo
+                                       cat `find ./ -name cksum.cc`                     >>x.ooo
 check configuring bochs;               ./configure                                      \
                                          --enable-cpu-level=3                           \
                                          --enable-fpu                                   \
