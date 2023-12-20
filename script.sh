@@ -147,6 +147,7 @@ cd bochs
                                        ./configure --help                               >x.ooo
                                        find ./ -name cksum.cc                           >>x.ooo
                                        cat `find ./ -name cksum.cc`                     >>x.ooo
+                                       sed  -i '1i #include <stdint.h>' `find ./ -name cksum.cc`
 check configuring bochs;               ./configure                                      \
                                          --enable-cpu-level=3                           \
                                          --enable-fpu                                   \
