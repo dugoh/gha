@@ -190,7 +190,7 @@ check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 co
 echo %%%%%%%%%%%%% bochsstuff
 cat ` find ./ -type f -name x.ooo`
 echo %%%%%%%%%%%%% bochsstuff
-exit
+
 # first boot ##########################
 cat >1 <<__EOF
 (echo y; echo y)|install
