@@ -148,7 +148,7 @@ cd bochs
                                        ./configure --help                               >x.ooo
                                        find ./ -name cksum.cc                           >>x.ooo
                                        cat `find ./ -name cksum.cc`                     >>x.ooo
-                                       sed  -i '1i #include <stdint.h>' `find ./ -name cksum.cc`
+check patching bochs;                  sed  -i '1i #include <stdint.h>' `find ./ -name cksum.cc`        && ok || nok
 check configuring bochs;               ./configure                                      \
                                          --enable-cpu-level=3                           \
                                          --enable-fpu                                   \
@@ -157,7 +157,7 @@ check configuring bochs;               ./configure                              
                                          --with-nogui                                   \
                                          --enable-all-optimizations                     \
                                          --enable-docbook=no                            >/dev/null 2>&1 && ok || nok
-check building bochs;                  make                                             >>x.ooo 2>&1 && ok || nok
+check building bochs;                  make                                             >>x.ooo    2>&1 && ok || nok
 check installing bochs;                sudo make install                                >/dev/null 2>&1 && ok || nok
 cd ..
 check tarring up bochs;                tar -cvf bochs.tar ./bochs                       >/dev/null 2>&1 && ok || nok
@@ -168,13 +168,13 @@ check setting capabilities;            sudo setcap                              
 check opening anon ftp and rate limit; printf "anonymous_enable=Yes\n"                  \
                                          |sudo tee -a ${ftpconv}                        >/dev/null 2>&1 && ok || nok
 check checking ftproot;                cd ${ftproot}                                    >/dev/null 2>&1 && ok || nok
-check extracting distribution/patches; bunzip2 -c ${wd}/BSD.tar.bz2 |sudo tar -xf -     >/dev/null 2>&1 && ok || nok
-check correct ownership;               sudo chown -R ftp:ftp ${ftproot}                 >/dev/null 2>&1 && ok || nok
-check correct ftproot permissions;     sudo chmod -R a-w ${ftproot}                     >/dev/null 2>&1 && ok || nok
-check correct file permissions;        sudo chmod 644 $(sudo find ${ftproot} -type f)   >/dev/null 2>&1 && ok || nok
-check correct directory permissions;   sudo chmod 555 $(sudo find ${ftproot} -type d)   >/dev/null 2>&1 && ok || nok
+check extracting distribution/patches; bunzip2 -c "${wd}/BSD.tar.bz2" |sudo tar -xf -   >/dev/null 2>&1 && ok || nok
+check correct ownership;               sudo chown -R ftp:ftp "${ftproot}"               >/dev/null 2>&1 && ok || nok
+check correct ftproot permissions;     sudo chmod -R a-w "${ftproot}"                   >/dev/null 2>&1 && ok || nok
+check correct file permissions;        sudo chmod 644 $(sudo find "${ftproot}" -type f) >/dev/null 2>&1 && ok || nok
+check correct directory permissions;   sudo chmod 555 $(sudo find "${ftproot}" -type d) >/dev/null 2>&1 && ok || nok
 check restarting vftpd;                sudo restart vsftpd                              >/dev/null 2>&1 && ok || nok
-check tunconfig script present;        cd $wd && ls tunconfig                           >/dev/null 2>&1 && ok || nok
+check tunconfig script present;        cd "$wd" && ls tunconfig                         >/dev/null 2>&1 && ok || nok
 check checking for free range;         sudo ifconfig| fgrep -q                          \
                                          $(grep iptables tunconfig                      \
                                          |head -1                                       \
@@ -190,6 +190,10 @@ check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 co
 echo %%%%%%%%%%%%% bochsstuff
 cat ` find ./ -type f -name x.ooo`
 echo %%%%%%%%%%%%% bochsstuff
+echo
+echo %%%%%%%%%%%%% ftpstuff
+ps -ef|grep ftp
+echo %%%%%%%%%%%%% ftpstuff
 
 # first boot ##########################
 cat >1 <<__EOF
