@@ -143,7 +143,6 @@ check checking gcc-c++;                g++ --version                            
 check checking ncurses;                ls -l /usr/include/ncurses.h                     >/dev/null 2>&1 && ok || nok
 check checking vsftpd;                 ps -ef|grep -qv [v]sftpd                         >/dev/null 2>&1 && ok || nok
 check checking 386BSD 0.1;             ls -l BSD.tar.bz2                                >/dev/null 2>&1 && ok || nok
-                                       file BSD.tar.bz2
 check getting bochs sources;           git clone "${bochs_src}"                         >/dev/null 2>&1 && ok || nok
 check checking bochs sources;          cd bochs                                         >/dev/null 2>&1 && ok || nok
 check reverting to last known good;    git reset --hard "${reset_to}"                   >/dev/null 2>&1 && ok || nok
@@ -191,32 +190,10 @@ check boot floppy;                     (sudo cat ${ftproot}/${flop};            
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
 )|format
 
-echo %%%%%%%%%%%%% bochsstuff
-cat ` find ./ -type f -name x.ooo`
-echo %%%%%%%%%%%%% bochsstuff
-echo
-echo %%%%%%%%%%%%% ftpstuff
-ps -ef|grep ftp
-echo %%%%%%%%%%%%% ftpstuff
-
 # first boot ##########################
 cat >1 <<__EOF
 (echo y; echo y)|install
 __EOF
-
-
-touch out
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-pwd
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-ls -ld `pwd`
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-#find ./
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-uname -a
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-id
-echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 (
   until egrep -q '#|werase' out ; do
@@ -225,7 +202,10 @@ echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   sleep 5
   slowcat ./1 2 .1
 )| TERM=vt100 bochs -q -f bochsrc |tee -a out
+echo
+
 mv out out_1.txt
+
 (
 check add 2 hours to clock;           sed -i -e "s/740756888/740764088/" bochsrc      >/dev/null 2>&1 && ok || nok
 )|format
@@ -270,6 +250,8 @@ touch out
   sleep 5
   slowcat ./2 4 1
 )| TERM=vt100 bochs -q -f bochsrc |tee -a out
+echo
+
 mv out out_2.txt
 (
 check add 2 hours to clock;           sed -i -e "s/740764088/740771288/" bochsrc      >/dev/null 2>&1 && ok || nok
@@ -282,9 +264,10 @@ touch out
 (sleep 33; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
 mv out out_3.txt
 ######################################
+echo
 
 (
-check add 2 hours to clock;           sed -i -e "s/740771288/740778488/" bochsrc      >/dev/null 2>&1 && ok || nok
+check add 2 hours to clock;           sed -i -e "s/740771288/740778488/" bochsrc        >/dev/null 2>&1 && ok || nok
 check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
 check add bochs;                      mv ../bochs/bochs.tar.bz2 ./                      >/dev/null 2>&1 && ok || nok
 check add the hard disk;              mv ../disk.img ./                                 >/dev/null 2>&1 && ok || nok
