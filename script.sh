@@ -1,4 +1,5 @@
 #!/bin/bash
+echo startpwd `pwd`
 function check {
   echo -ne "$*\t"
 }
@@ -306,3 +307,7 @@ check push to gh-pages;               push                                      
 echo %%%%
 push
 echo %%%%
+
+echo endpwd `pwd`
+echo
+ls -l
