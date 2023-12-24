@@ -1,5 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2015 # if echo fails we have bigger problems
+# shellcheck disable=SC2046 # intentional golfing
 
 function check {
   echo -ne "$*\t"
@@ -24,7 +25,8 @@ function format {
 function slowcat {
 [[ -z "${3}" ]] && echo usage: "$0" file chunksize waittime && return 1
   local c=0
-  local b=$(wc -c <"${1}")
+  local b
+  b=$(wc -c <"${1}")
     while [ ${c} -lt "${b}" ]; do
     dd if="${1}" bs=1 count="${2}" skip=${c} 2>/dev/null
     (( c = c + ${2} ))
@@ -34,41 +36,42 @@ function slowcat {
 
 function index {
   echo "<HTML><HEAD><TITLE>LINKS</TITLE></HEAD><BODY><ul>" >index.html
+  # shellcheck disable=SC2010
   for file in $(ls|grep -v index.html); do \
     (\
       printf '<li><a href="' ; \
-      printf "${file}" ; \
+      printf "%s" "${file}" ; \
       printf '">' ; \
-      printf "${file}" ; \
+      printf "%s" "${file}" ; \
       printf '</a></li>\n' \
     ) >>index.html ; \
   done
   echo "</ul></BODY></HTML>" >>index.html
 }
 
-function tpush {
-  echo ---- vars ----
-  set |sed -e's/=.*//'
-  echo ---- /vars ----
-  git init
-  git config user.name "${USER}"
-  git config user.email "${GHP_MAIL}"
-  git add .
-  git commit -m "Deploy to GitHub Pages"
-  git push --force --quiet https://${GHP_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git master:gh-pages
-}
+#function tpush {
+#  echo ---- vars ----
+#  set |sed -e's/=.*//'
+#  echo ---- /vars ----
+#  git init
+#  git config user.name "${USER}"
+#  git config user.email "${GHP_MAIL}"
+#  git add .
+#  git commit -m "Deploy to GitHub Pages"
+#  git push --force --quiet https://${GHP_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git master:gh-pages
+#}
 
-function push {
-  echo ---- vars ----
-  set |sed -e's/=.*//'
-  echo ---- /vars ----
-  git init
-  git config user.name "action"
-  git config user.email "action@github.com"
-  git add .
-  git commit -m "Deploy to GitHub Pages"
-  git push --force --quiet https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${REPOSITORY}.git main:gh-pages
-}
+#function push {
+#  echo ---- vars ----
+#  set |sed -e's/=.*//'
+#  echo ---- /vars ----
+#  git init
+#  git config user.name "action"
+#  git config user.email "action@github.com"
+#  git add .
+#  git commit -m "Deploy to GitHub Pages"
+#  git push --force --quiet https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${REPOSITORY}.git main:gh-pages
+#}
 
 # R.I.P. bochs, latest SVN, does not build anymore
 # bochs_src=https://svn.code.sf.net/p/bochs/code/trunk
@@ -79,7 +82,7 @@ reset_to=81fca4481acb6c71dfd2d9dff974bf6c36f593a1
 
 wd="$(pwd)"
 ftproot=$(grep "^ftp:" /etc/passwd|cut -d ':' -f 6)
-ftpconv=$(find /etc/ -name vsftpd.conf 2>/dev/null|fgrep -v init)
+ftpconv=$(find /etc/ -name vsftpd.conf 2>/dev/null|grep -F -v init)
 flop=BSD/386bsd-0.1/bootable/dist.fs
 ip=$(ifconfig eth0|grep "inet "|awk '{print $2}')
 
@@ -165,16 +168,16 @@ check checking wget;                   wget --help                              
 check checking gcc;                    gcc --version                                    >/dev/null 2>&1 && ok || nok
 check checking gcc-c++;                g++ --version                                    >/dev/null 2>&1 && ok || nok
 check checking ncurses;                ls -l /usr/include/ncurses.h                     >/dev/null 2>&1 && ok || nok
-check checking vsftpd;                 ps -ef|grep -qv [v]sftpd                         >/dev/null 2>&1 && ok || nok
+check checking vsftpd;                 pgrep vsftpd                                     >/dev/null 2>&1 && ok || nok
 check checking 386BSD 0.1;             ls -l BSD.tar.bz2                                >/dev/null 2>&1 && ok || nok
 check getting bochs sources;           git clone "${bochs_src}"                         >/dev/null 2>&1 && ok || nok
 check checking bochs sources;          cd bochs                                         >/dev/null 2>&1 && ok || nok
 check reverting to last known good;    git reset --hard "${reset_to}"                   >/dev/null 2>&1 && ok || nok
-cd bochs
+cd bochs || exit
                                        ./configure --help                               >x.ooo
                                        find ./ -name cksum.cc                           >>x.ooo
-                                       cat `find ./ -name cksum.cc`                     >>x.ooo
-check patching bochs;                  sed  -i '1i #include <stdint.h>' `find ./ -name cksum.cc`        && ok || nok
+                                       cat "$(find ./ -name cksum.cc)"                  >>x.ooo
+check patching bochs;                  sed  -i '1i #include <stdint.h>' "$(find ./ -name cksum.cc)"     && ok || nok
 check configuring bochs;               ./configure                                      \
                                          --enable-cpu-level=3                           \
                                          --enable-fpu                                   \
@@ -192,35 +195,36 @@ check setting capabilities;            sudo setcap                              
                                          CAP_NET_ADMIN,CAP_NET_RAW=eip                  \
                                          /usr/local/bin/bochs                           >/dev/null 2>&1 && ok || nok
 check opening anon ftp and rate limit; printf "anonymous_enable=Yes\n"                  \
-                                         |sudo tee -a ${ftpconv}                        >/dev/null 2>&1 && ok || nok
-check checking ftproot;                cd ${ftproot}                                    >/dev/null 2>&1 && ok || nok
+                                         |sudo tee -a "${ftpconv}"                      >/dev/null 2>&1 && ok || nok
+check checking ftproot;                cd "${ftproot}"                                  >/dev/null 2>&1 && ok || nok
 check extracting distribution/patches; bunzip2 -c "${wd}/BSD.tar.bz2" |sudo tar -xf -   >/dev/null 2>&1 && ok || nok
 check correct ownership;               sudo chown -R ftp:ftp "${ftproot}"               >/dev/null 2>&1 && ok || nok
 check correct ftproot permissions;     sudo chmod -R a-w "${ftproot}"                   >/dev/null 2>&1 && ok || nok
 check correct file permissions;        sudo chmod 644 $(sudo find "${ftproot}" -type f) >/dev/null 2>&1 && ok || nok
 check correct directory permissions;   sudo chmod 555 $(sudo find "${ftproot}" -type d) >/dev/null 2>&1 && ok || nok
 check restarting vsftpd;               sudo service vsftpd restart                      >/dev/null 2>&1 && ok || nok
-check re-checking vsftpd;              ps -ef|grep -qv [v]sftpd                         >/dev/null 2>&1 && ok || nok
+check re-checking vsftpd;              pgrep vsftpd                                     >/dev/null 2>&1 && ok || nok
 check tunconfig script present;        cd "$wd" && ls tunconfig                         >/dev/null 2>&1 && ok || nok
-check checking for free range;         sudo ifconfig| fgrep -q                          \
-                                         $(grep iptables tunconfig                      \
-                                         |head -1                                       \
-                                         |sed -e's/.*-d //'                             \
-                                         |awk -F'.' '{print ":"$1"."$2"."}')            2>/dev/null && warn || ok
+check checking for free range;         sudo ifconfig| grep -F -q                        \
+                                         "$(grep iptables tunconfig                     \
+                                          |head -1                                      \
+                                          |sed -e's/.*-d //'                            \
+                                          |awk -F'.' '{print ":"$1"."$2"."}')"          2>/dev/null && warn || ok
 check bochs config present;            ls bochsrc                                       >/dev/null 2>&1 && ok || nok
-check boot floppy;                     (sudo cat ${ftproot}/${flop};                    \
+check boot floppy;                     ( sudo cat "${ftproot}/${flop}";                 \
                                          dd if=/dev/zero bs=1 count=245760              \
-                                         )>boot.img 2>/dev/null; ls boot.img            >/dev/null 2>&1 && ok || nok
+                                       )>boot.img 2>/dev/null; ls boot.img              >/dev/null 2>&1 && ok || nok
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
 )|format
 
+# shellcheck disable=SC2210 # files named 1 or confuses shellcheck
 # first boot ##########################
 cat >1 <<__EOF
 (echo y; echo y)|install
 __EOF
 
 (
-  until egrep -q '#|werase' out ; do
+  until grep -E -q '#|werase' out ; do
     sleep 5
   done
   sleep 5
@@ -235,7 +239,7 @@ check add 2 hours to clock;           sed -i -e "s/740756888/740764088/" bochsrc
 )|format
 ######################################
 
-
+# shellcheck disable=SC2210 # files named 1 or confuses shellcheck
 # second boot ########################
 cat >2 <<__EOF
 echo "machine ${ip}" >.netrc
@@ -268,7 +272,7 @@ __EOF
 
 touch out
 (
-  until egrep -q '#|werase' out ; do
+  until grep -E -q '#|werase' out ; do
     sleep 5
   done
   sleep 5
