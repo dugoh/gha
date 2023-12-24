@@ -302,8 +302,8 @@ check add the bochs config;           mv ../bochsrc ./                          
 check add the TUN config;             mv ../tunconfig ./                                >/dev/null 2>&1 && ok || nok
 check add the screen output;          mv ../out_* ./                                    >/dev/null 2>&1 && ok || nok
 check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
-check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
+#check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
 )|format
-cat ../outf
-cat outf
+#cat ../outf
+#cat outf
 
