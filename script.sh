@@ -1,5 +1,6 @@
 #!/bin/bash
-echo startpwd `pwd`
+# shellcheck ignore=SC2015 # if echo fails we have bigger problems
+
 function check {
   echo -ne "$*\t"
 }
