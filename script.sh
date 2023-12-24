@@ -271,7 +271,7 @@ check add 2 hours to clock;           sed -i -e "s/740764088/740771288/" bochsrc
 
 # third boot #########################
 touch out
-(sleep 33; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
+(sleep 55; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
 mv out out_3.txt
 ######################################
 echo
@@ -291,3 +291,6 @@ check add the screen output;          mv ../out_* ./                            
 check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
 check push to gh-pages;               push                                              >/dev/null 2>&1 && ok || nok
 )|format
+echo %%%%
+push
+echo %%%%
