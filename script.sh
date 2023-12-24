@@ -67,9 +67,9 @@ wd="$(pwd)"
 ftproot=$(grep "^ftp:" /etc/passwd|cut -d ':' -f 6)
 ftpconv=$(find /etc/ -name vsftpd.conf 2>/dev/null|fgrep -v init)
 flop=BSD/386bsd-0.1/bootable/dist.fs
-ip=$(ifconfig eth0|grep "inet addr:"|awk '{print $2}'|sed -e's/.*://')
+ip=$(ifconfig eth0|grep "inet "|awk '{print $2}')
 
-
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo wd = "${wd}"
 echo ftproot = "${ftproot}"
 echo ftpconv = "${ftpconv}"
@@ -79,7 +79,11 @@ echo ip = "${ip}"
 ifconfig -a
 echo
 netstat -an
-exit
+echo
+cat "${ftpconv}"
+echo
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo
 
 cat >bochsrc <<"__EOF"
 config_interface: textconfig
