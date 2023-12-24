@@ -44,7 +44,7 @@ function index {
   echo "</ul></BODY></HTML>" >>index.html
 }
 
-function push {
+function tpush {
   echo ---- vars ----
   set |sed -e's/=.*//'
   echo ---- /vars ----
@@ -54,6 +54,18 @@ function push {
   git add .
   git commit -m "Deploy to GitHub Pages"
   git push --force --quiet https://${GHP_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git master:gh-pages
+}
+
+function push {
+  echo ---- vars ----
+  set |sed -e's/=.*//'
+  echo ---- /vars ----
+  git init
+  git config user.name "action"
+  git config user.email "action@github.com"
+  git add .
+  git commit -m "Deploy to GitHub Pages"
+  git push --force --quiet https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${REPOSITORY}.git main:gh-pages
 }
 
 # R.I.P. bochs, latest SVN, does not build anymore
