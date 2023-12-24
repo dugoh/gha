@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck ignore=SC2015 # if echo fails we have bigger problems
+# shellcheck disable=SC2015 # if echo fails we have bigger problems
 
 function check {
   echo -ne "$*\t"
@@ -22,13 +22,13 @@ function format {
 }
 
 function slowcat {
-[[ -z "${3}" ]] && echo usage: $0 file chunksize waittime && return 1
+[[ -z "${3}" ]] && echo usage: "$0" file chunksize waittime && return 1
   local c=0
-  local b=$(wc -c <${1})
-    while [ ${c} -lt ${b} ]; do
-    dd if=${1} bs=1 count=${2} skip=${c} 2>/dev/null
+  local b=$(wc -c <"${1}")
+    while [ ${c} -lt "${b}" ]; do
+    dd if="${1}" bs=1 count="${2}" skip=${c} 2>/dev/null
     (( c = c + ${2} ))
-    sleep ${3}
+    sleep "${3}"
   done
 }
 
@@ -305,6 +305,3 @@ check add the screen output;          mv ../out_* ./                            
 check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
 #check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
 )|format
-#cat ../outf
-#cat outf
-
