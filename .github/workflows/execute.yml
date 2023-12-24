@@ -22,6 +22,7 @@ jobs:
            ./script.sh
       - name: Init new repo in dist folder and commit generated files
         run: |
+          ls -ltrd $(find ./)
           cd gh-pages
           git init
           git add -A
