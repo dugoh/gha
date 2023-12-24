@@ -56,10 +56,6 @@ function push {
   git push --force --quiet https://${GHP_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git master:gh-pages
 }
 
-wd=$(pwd)
-echo $wd
-echo m00!
-
 # R.I.P. bochs, latest SVN, does not build anymore
 # bochs_src=https://svn.code.sf.net/p/bochs/code/trunk
 # R.I.P. svn2github, HEAD does not build anymore and is not being updated anymore
@@ -67,10 +63,17 @@ echo m00!
 bochs_src=https://github.com/svn2github/bochs.git
 reset_to=81fca4481acb6c71dfd2d9dff974bf6c36f593a1
 
+wd="$(pwd)"
 ftproot=$(grep "^ftp:" /etc/passwd|cut -d ':' -f 6)
 ftpconv=$(find /etc/ -name vsftpd.conf 2>/dev/null|fgrep -v init)
 flop=BSD/386bsd-0.1/bootable/dist.fs
 ip=$(ifconfig eth0|grep "inet addr:"|awk '{print $2}'|sed -e's/.*://')
+
+echo wd = "${wd}"
+echo ftproot = "${ftproot}"
+echo ftpconv = "${ftpconv}"
+echo flop = "${flop}"
+echo ip = "${ip}"
 
 cat >bochsrc <<"__EOF"
 config_interface: textconfig
@@ -173,7 +176,8 @@ check correct ownership;               sudo chown -R ftp:ftp "${ftproot}"       
 check correct ftproot permissions;     sudo chmod -R a-w "${ftproot}"                   >/dev/null 2>&1 && ok || nok
 check correct file permissions;        sudo chmod 644 $(sudo find "${ftproot}" -type f) >/dev/null 2>&1 && ok || nok
 check correct directory permissions;   sudo chmod 555 $(sudo find "${ftproot}" -type d) >/dev/null 2>&1 && ok || nok
-check restarting vftpd;                sudo restart vsftpd                              >/dev/null 2>&1 && ok || nok
+check restarting vsftpd;               sudo service vsftpd restart                      >/dev/null 2>&1 && ok || nok
+check re-checking vsftpd;              ps -ef|grep -qv [v]sftpd                         >/dev/null 2>&1 && ok || nok
 check tunconfig script present;        cd "$wd" && ls tunconfig                         >/dev/null 2>&1 && ok || nok
 check checking for free range;         sudo ifconfig| fgrep -q                          \
                                          $(grep iptables tunconfig                      \
