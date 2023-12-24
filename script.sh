@@ -69,6 +69,8 @@ ftpconv=$(find /etc/ -name vsftpd.conf 2>/dev/null|fgrep -v init)
 flop=BSD/386bsd-0.1/bootable/dist.fs
 ip=$(ifconfig eth0|grep "inet addr:"|awk '{print $2}'|sed -e's/.*://')
 
+ifconfig -a
+exit
 echo wd = "${wd}"
 echo ftproot = "${ftproot}"
 echo ftpconv = "${ftpconv}"
