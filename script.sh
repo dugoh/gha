@@ -210,7 +210,7 @@ __EOF
     sleep 5
   done
   sleep 5
-  slowcat ./1 2 .1
+  slowcat ./1 2 .3
 )| TERM=vt100 bochs -q -f bochsrc |tee -a out
 echo
 
@@ -258,7 +258,7 @@ touch out
     sleep 5
   done
   sleep 5
-  slowcat ./2 4 1
+  slowcat ./2 4 1.2
 )| TERM=vt100 bochs -q -f bochsrc |tee -a out
 echo
 
