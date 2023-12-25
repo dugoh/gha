@@ -1,1 +1,1 @@
-try github actions
+try github actions and pages
