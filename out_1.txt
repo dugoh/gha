@@ -1,0 +1,23 @@
+========================================================================
+                     Bochs x86 Emulator 2.6.9.svn
+              Built from SVN snapshot after release 2.6.9
+                  Compiled on Dec 25 2023 at 07:48:30
+========================================================================
+(B)0[1;24r[m[?7h[?1h=[H[J[H[J[0;1mPlex86/Bochs VGABios (PCI) current-cvs 26 Jan 2018[1BThis VGA/VBE Bios is released under the GNU LGPL[2BPlease visit :[1B . http://bochs.sourceforge.net[1B . http://www.nongnu.org/vgabios[2BNO Bochs VBE Support available![2B[mBochs BIOS - build: 05/03/18[1B$Revision: 13498 $ $Date: 2018-05-03 19:54:31 +0200 (Thu, 03 May 2018) $[1BOptions: apmbios pcibios pnpbios eltorito[2Bata0 master: generic ATA-6 Hard-Disk ( 504 MBytes)[2BPress F12 for boot menu.[2BBooting from Hard Disk...[1BBoot failed: not a bootable disk[2BBooting from Floppy...[1B[2B
+
+
+
+
+
+
+[9A[0;1m386BSD Release 0.1 by William and Lynne Jolitz.[m [0.1.24  07/14/92 19:07][1BCopyright (c) 1989,1990,1991,1992 William F. Jolitz. All rights reserved.[1BBased in part on work by the 386BSD User Community and the[1BBSD Networking Software, Release 2 by UCB EECS Department.[1Bpc0<color> at 0x60 irq 1 on isa[1Bwd0 <generic> at 0x1f0 irq 14 on isa[1Bfd0 drives 0: 1.44M at 0x3f0 irq 6 drq 2 on isa[1Bne0 ethernet address fe:fd:00:00:00:01 at 0x300 irq 9 on isa[1Bnpx0 at 0xf0 irq 13 on isa[1Bchanging root device to fd0a
+
+warning: no swap space present (yet)[43C
+
+
+
+
+
+
+[6A386BSD Distribution Installation Floppy (Tiny 386BSD) Release 0.1[2BPlease read the installation notes (type 'zmore INSTALL.NOTES')[1Band registration information (type 'more REGISTRATION') before use.[1BTo install on hard disk drive, type 'install'.[2Berase ^?, werase ^H, kill ^U, intr ^C[22APlease read the installation notes (type 'zmore INSTALL.NOTES')[1Band registration information (type 'more REGISTRATION') before use.[1BTo install on hard disk drive, type 'install'.[1B[K[1Berase ^?, werase ^H, kill ^U, intr ^C[K[1B# (echo y; echo y)|install[K[1BDo you want to install 386BSD on the ENTIRE drive? (y/n) You realize this means[1Byou lose the old contents of this drive.                  [1BDo you *still* want to install 386BSD on the entire drive? (y/n)High level forma[11;1Htting of 386BSD disk storage:       [1B/dev/rwd0a:     1020096 sectors in 1012 cylinders of 16 tracks, 63 sectors[1B        522.3MB in 64 cyl groups (16 c/g, 8.26MB/g, 1920 i/g)[1Bsuper-block backups (for fsck -b #) at:[1B 32, 16224, 32416, 48608, 64800, 80992, 97184, 113376, 129568,[1B 145760, 161952, 178144, 194336, 210528, 226720, 242912, 258080, 274272,[1B 290464, 306656, 322848, 339040, 355232, 371424, 387616, 403808, 420000,[1B 436192, 452384, 468576, 484768, 500960, 516128, 532320, 548512, 564704,[1B 580896, 597088, 613280, 629472, 645664, 661856, 678048, 694240, 710432,[1B 726624, 742816, 759008, 774176, 790368, 806560, 822752, 838944, 855136,[1B 871328, 887520, 903712, 919904, 936096, 952288, 968480, 984672, 1000864,[1B 1017056,[K[1BMounting 386BSD filesystem.[1BInstalling files from installation floppy.[37C
+Extracting the distribution utilities from the installation floppy.[H[J[24;1H[?1l>
