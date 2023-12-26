@@ -289,7 +289,7 @@ touch out
   done
   sleep 5
   slowcat ./2 4 1.2
-)| TERM=vt100 bochs -q -f bochsrc |tee -a out
+)| TERM=vt100 bochs -q -f bochsrc |tee -a out |sed -e's/startart//g'
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_2.txt
