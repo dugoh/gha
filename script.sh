@@ -411,6 +411,8 @@ ls -l
 which script
 type script
 script --help
+echo
+qemu --help
 
 # fifth boot ##############################################
 touch out
