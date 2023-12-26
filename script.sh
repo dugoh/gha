@@ -407,6 +407,11 @@ check convert disk;                   qemu-img convert \
                                               -f raw -O qcow2 disk.img qdisk.img        >/dev/null 2>&1 && ok || nok
 )|format
 
+ls -l
+which script
+type script
+script --help
+
 # fifth boot ##############################################
 touch out
 (
