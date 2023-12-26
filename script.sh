@@ -1,6 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC2015 # if echo fails we have bigger problems
 # shellcheck disable=SC2046 # intentional golfing
+# shellcheck disable=SC2210 # files named 1 or 2confuses shellcheck
 
 function check {
   echo -ne "$*\t"
@@ -223,12 +224,14 @@ check setting qemu capabilities;       sudo setcap                              
 cd ..
 )|format
 
-# shellcheck disable=SC2210 # files named 1 or confuses shellcheck
 # first boot ##########################
 cat >1 <<__EOF
 (echo y; echo y)|install
 __EOF
 
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo first boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 (
   until grep -E -q '#|werase' out ; do
     sleep 5
@@ -236,16 +239,16 @@ __EOF
   sleep 5
   slowcat ./1 2 .3
 )| TERM=vt100 bochs -q -f bochsrc |tee -a out
+mv out out_1.txt
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 
-mv out out_1.txt
-
 (
-check add 2 hours to clock;           sed -i -e "s/740756888/740764088/" bochsrc      >/dev/null 2>&1 && ok || nok
+check add 2 hours to clock;           sed -i -e "s/740756888/740764088/" bochsrc              >/dev/null 2>&1 && ok || nok
 )|format
+echo
 ######################################
 
-# shellcheck disable=SC2210 # files named 1 or confuses shellcheck
 # second boot ########################
 cat >2 <<__EOF
 echo "machine ${ip}" >.netrc
@@ -276,6 +279,9 @@ route add default 192.168.1.1
 ftp ${ip}
 __EOF
 
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo second boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
   until grep -E -q '#|werase' out ; do
@@ -284,9 +290,10 @@ touch out
   sleep 5
   slowcat ./2 4 1.2
 )| TERM=vt100 bochs -q -f bochsrc |tee -a out
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
-
 mv out out_2.txt
+
 (
 check add 2 hours to clock;           sed -i -e "s/740764088/740771288/" bochsrc      >/dev/null 2>&1 && ok || nok
 )|format
@@ -294,11 +301,14 @@ check add 2 hours to clock;           sed -i -e "s/740764088/740771288/" bochsrc
 
 
 # third boot #########################
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo third boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (sleep 70; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
-mv out out_3.txt
-######################################
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
+mv out out_3.txt
 
 (
 check add 2 hours to clock;           sed -i -e "s/740771288/740778488/" bochsrc        >/dev/null 2>&1 && ok || nok
@@ -317,12 +327,18 @@ check add 2 hours to clock;           sed -i -e "s/740771288/740778488/" bochsrc
 #check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
 )|format
 
-# second third boot (fsck due to clock shift) #############
+# a second third boot (fsck due to clock shift) #############
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo a second third boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
-(sleep 20; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
+(sleep 30; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo
 mv out out_3b.txt
 ###########################################################
 
+# fourth boot #############################################
 cat >4 <<"__EOF4__"
 root
 
@@ -351,7 +367,9 @@ chmod +x /to_pk023.sh
 /to_pk023.sh
 __EOF4__
 
-# fourth boot #############################################
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo fourth boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
   until egrep -q 'login:|console' out ; do
@@ -360,6 +378,8 @@ touch out
   sleep 5
   slowcat ./4 4 1
 )| TERM=vt100 bochs -q -f bochsrc |tee -a out 
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo
 mv out out_4.txt
 ###########################################################
 
