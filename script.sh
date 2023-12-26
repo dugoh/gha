@@ -289,7 +289,7 @@ touch out
   done
   sleep 5
   slowcat ./2 4 1.2
-)| TERM=vt100 bochs -q -f bochsrc |tee -a out |sed -e's/startart//g'
+)| TERM=vt100 bochs -q -f bochsrc |tee -a out |sed -e's/startart//g'|sed -e's/startart//g'
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_2.txt
@@ -327,15 +327,15 @@ check add 2 hours to clock;           sed -i -e "s/740771288/740778488/" bochsrc
 #check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
 )|format
 
-# a second third boot (fsck due to clock shift) #############
-echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-echo a second third boot
-echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-touch out
-(sleep 30; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
-echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-echo
-mv out out_3b.txt
+# # a second third boot (fsck due to clock shift) #############
+# echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# echo a second third boot
+# echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# touch out
+# (sleep 30; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
+# echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# echo
+# mv out out_3b.txt
 ###########################################################
 
 # fourth boot #############################################
