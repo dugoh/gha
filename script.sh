@@ -49,30 +49,6 @@ function index {
   echo "</ul></BODY></HTML>" >>index.html
 }
 
-#function tpush {
-#  echo ---- vars ----
-#  set |sed -e's/=.*//'
-#  echo ---- /vars ----
-#  git init
-#  git config user.name "${USER}"
-#  git config user.email "${GHP_MAIL}"
-#  git add .
-#  git commit -m "Deploy to GitHub Pages"
-#  git push --force --quiet https://${GHP_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git master:gh-pages
-#}
-
-#function push {
-#  echo ---- vars ----
-#  set |sed -e's/=.*//'
-#  echo ---- /vars ----
-#  git init
-#  git config user.name "action"
-#  git config user.email "action@github.com"
-#  git add .
-#  git commit -m "Deploy to GitHub Pages"
-#  git push --force --quiet https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${REPOSITORY}.git main:gh-pages
-#}
-
 # R.I.P. bochs, latest SVN, does not build anymore
 # bochs_src=https://svn.code.sf.net/p/bochs/code/trunk
 # R.I.P. svn2github, HEAD does not build anymore and is not being updated anymore
@@ -92,15 +68,7 @@ echo ftproot = "${ftproot}"
 echo ftpconv = "${ftpconv}"
 echo flop = "${flop}"
 echo ip = "${ip}"
-
-ifconfig -a
-echo
-netstat -an
-echo
-cat "${ftpconv}"
-echo
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-echo
 
 cat >bochsrc <<"__EOF"
 config_interface: textconfig
@@ -174,9 +142,9 @@ check getting bochs sources;           git clone "${bochs_src}"                 
 check checking bochs sources;          cd bochs                                         >/dev/null 2>&1 && ok || nok
 check reverting to last known good;    git reset --hard "${reset_to}"                   >/dev/null 2>&1 && ok || nok
 cd bochs || exit
-                                       ./configure --help                               >x.ooo
-                                       find ./ -name cksum.cc                           >>x.ooo
-                                       cat "$(find ./ -name cksum.cc)"                  >>x.ooo
+                                       ./configure --help                               >d.out
+                                       find ./ -name cksum.cc                           >>d.out
+                                       cat "$(find ./ -name cksum.cc)"                  >>d.out
 check patching bochs;                  sed  -i '1i #include <stdint.h>' "$(find ./ -name cksum.cc)"     && ok || nok
 check configuring bochs;               ./configure                                      \
                                          --enable-cpu-level=3                           \
@@ -186,7 +154,7 @@ check configuring bochs;               ./configure                              
                                          --with-nogui                                   \
                                          --enable-all-optimizations                     \
                                          --enable-docbook=no                            >/dev/null 2>&1 && ok || nok
-check building bochs;                  make                                             >>x.ooo    2>&1 && ok || nok
+check building bochs;                  make                                             >>d.out    2>&1 && ok || nok
 check installing bochs;                sudo make install                                >/dev/null 2>&1 && ok || nok
 cd ..
 check tarring up bochs;                tar -cvf bochs.tar ./bochs                       >/dev/null 2>&1 && ok || nok
@@ -215,6 +183,44 @@ check boot floppy;                     ( sudo cat "${ftproot}/${flop}";         
                                          dd if=/dev/zero bs=1 count=245760              \
                                        )>boot.img 2>/dev/null; ls boot.img              >/dev/null 2>&1 && ok || nok
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
+# build qemu
+check getting qemu source;       git clone https://github.com/qemu/qemu.git                   >/dev/null 2>&1 && ok || nok
+cd qemu || exit
+check going back to 0.11;        git reset --hard 08fd2f30bd3ee5d04596da8293689af4d4f7eb6c    >/dev/null 2>&1 && ok || nok
+check remove definition of BIT;  sed -i -e 's/#define BIT.n. .1 << .n../\/\/&/' hw/eepro100.c >/dev/null 2>&1 && ok || nok
+check define BIT properly;       printf "#ifndef BIT\n#define BIT(n) (1 << (n))\n#endif\n" >> qemu-common.h   && ok || nok
+check configure qemu;            ./configure --target-list=i386-softmmu \
+                                             --disable-sdl \
+                                             --disable-vnc-tls \
+                                             --disable-vnc-sasl \
+                                             --disable-vde                                    >/dev/null 2>&1 && ok || nok
+check make qemu;                 make                                                         >/dev/null 2>&1 && ok || warn
+cd i386-softmmu || exit
+check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
+                                     vl.o osdep.o monitor.o pci.o loader.o \
+                                     isa_mmio.o machine.o gdbstub.o gdbstub-xml.o \
+                                     msix.o ioport.o virtio-blk.o \
+                                     virtio-balloon.o virtio-net.o virtio-console.o \
+                                     kvm.o kvm-all.o usb-ohci.o eepro100.o ne2000.o \
+                                     pcnet.o rtl8139.o e1000.o wdt_ib700.o \
+                                     wdt_i6300esb.o ide.o pckbd.o vga.o  sb16.o es1370.o \
+                                     ac97.o dma.o fdc.o mc146818rtc.o serial.o i8259.o \
+                                     i8254.o pcspk.o pc.o cirrus_vga.o apic.o ioapic.o \
+                                     parallel.o acpi.o piix_pci.o usb-uhci.o vmmouse.o \
+                                     vmport.o vmware_vga.o hpet.o device-hotplug.o \
+                                     pci-hotplug.o smbios.o \
+                                     -Wl,--whole-archive ../libqemu_common.a libqemu.a ../libhw64/libqemuhw64.a \
+                                     -Wl,--no-whole-archive \
+                                     -lm -lrt -lpthread -lz -lutil -lncurses -ltinfo          >/dev/null 2>&1 && ok || nok
+cd ..
+check continue make qemu;        make                                                         >/dev/null 2>&1 && ok || nok
+check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
+check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
+check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
+check setting qemu capabilities;       sudo setcap                                            \
+                                         CAP_NET_ADMIN,CAP_NET_RAW=eip                        \
+                                         /usr/local/bin/qemu                                  >/dev/null 2>&1 && ok || nok
+cd ..
 )|format
 
 # shellcheck disable=SC2210 # files named 1 or confuses shellcheck
@@ -296,17 +302,130 @@ echo
 
 (
 check add 2 hours to clock;           sed -i -e "s/740771288/740778488/" bochsrc        >/dev/null 2>&1 && ok || nok
+#check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
+#check add bochs;                      mv ../bochs/bochs.tar.bz2 ./                      >/dev/null 2>&1 && ok || nok
+#check add the hard disk;              mv ../disk.img ./                                 >/dev/null 2>&1 && ok || nok
+#check compress the disk;              bzip2 --best disk.img                             >/dev/null 2>&1 && ok || nok
+#check split the disk in parts;        split -b 50m "disk.img.bz2" "disk.part-"          >/dev/null 2>&1 && ok || nok
+#check remove the unsplit disk;        rm disk.img.bz2                                   >/dev/null 2>&1 && ok || nok
+#check add the floppy disk;            mv ../boot.img ./                                 >/dev/null 2>&1 && ok || nok
+#check add the bochs config;           mv ../bochsrc ./                                  >/dev/null 2>&1 && ok || nok
+#check add the TUN config;             mv ../tunconfig ./                                >/dev/null 2>&1 && ok || nok
+#check add the screen output;          mv ../out_* ./                                    >/dev/null 2>&1 && ok || nok
+#check add intentionally blank file;   touch ./out_4.txt                                 >/dev/null 2>&1 && ok || nok
+#check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
+#check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
+)|format
+
+# second third boot (fsck due to clock shift) #############
+touch out
+(sleep 20; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
+mv out out_3b.txt
+###########################################################
+
+cat >4 <<"__EOF4__"
+root
+
+exec sh
+cat >/to_pk023.sh <<"__EOF"
+#!/bin/sh
+cd /
+tar -xvf pk023.tar
+mv patch dist
+cd dist/bin
+./mkpatchdirs
+(echo y; echo; echo; echo IALL; echo y ; echo ; echo q)|./patches
+./afterinstall.sh
+rm -r /sys/compile/*
+cd /sys/i386/conf
+config GENERICISA
+cd /sys/compile/GENERICISA
+make depend
+make
+mv /386bsd /386bsd.old
+cp 386bsd /386bsd
+sync; sync; sync
+shutdown -rf now
+__EOF
+chmod +x /to_pk023.sh
+/to_pk023.sh
+__EOF4__
+
+# fourth boot #############################################
+touch out
+(
+  until egrep -q 'login:|console' out ; do
+    sleep 5;
+  done
+  sleep 5
+  slowcat ./4 4 1
+)| TERM=vt100 bochs -q -f bochsrc |tee -a out 
+mv out out_4.txt
+###########################################################
+
+(
+check add 2 hours to clock;           sed -i -e's/time0=.*/time0=735335193/' bochsrc    >/dev/null 2>&1 && ok || nok
+)|format
+
+cat >5 <<"__EOF5__"
+root
+
+exec sh
+cat >/buildworld_pk023.sh <<"__EOF"
+#!/bin/sh
+cd /patch/bin
+./buildworld.sh
+sync; sync; sync
+shutdown -rf now
+__EOF
+chmod +x /buildworld_pk023.sh
+/buildworld_pk023.sh
+__EOF5__
+
+(
+check convert disk;                   qemu-img convert \
+                                              -f raw -O qcow2 disk.img qdisk.img        >/dev/null 2>&1 && ok || nok
+)|format
+
+# fifth boot ##############################################
+touch out
+(
+  until egrep -q 'login:|console' out ; do
+    sleep 5;
+  done
+  sleep 5
+  slowcat ./5 1 .5
+)| TERM=vt100 script -f -c 'qemu          \
+                -L /usr/local/share/qemu/ \
+                -curses                   \
+                -hda qdisk.img            \
+                -M isapc                  \
+                -net nic                  \
+                -no-reboot                \
+                -m 64                     \
+                -startdate "1994-04-21"'  \
+ |tee -a out                              \
+ |tr -cd 'c'                              \
+ |fold -w 120
+mv out out_5.txt
+###########################################################
+
+echo;echo ====;echo;echo
+fold out_5.txt|head -150
+echo;echo ====;echo;echo
+fold out_5.txt|tail -150
+echo;echo ====;echo;echo
+
+(
 check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
-check add bochs;                      mv ../bochs/bochs.tar.bz2 ./                      >/dev/null 2>&1 && ok || nok
-check add the hard disk;              mv ../disk.img ./                                 >/dev/null 2>&1 && ok || nok
-check compress the disk;              bzip2 --best disk.img                             >/dev/null 2>&1 && ok || nok
-check split the disk in parts;        split -b 50m "disk.img.bz2" "disk.part-"          >/dev/null 2>&1 && ok || nok
-check remove the unsplit disk;        rm disk.img.bz2                                   >/dev/null 2>&1 && ok || nok
+check add the hard disk;              mv ../qdisk.img ./                                >/dev/null 2>&1 && ok || nok
+check compress the disk;              bzip2 --best qdisk.img                            >/dev/null 2>&1 && ok || nok
+check split the disk in parts;        split -b 50m "qdisk.img.bz2" "qdisk.part-"        >/dev/null 2>&1 && ok || nok
+check remove the unsplit disk;        rm qdisk.img.bz2                                  >/dev/null 2>&1 && ok || nok
 check add the floppy disk;            mv ../boot.img ./                                 >/dev/null 2>&1 && ok || nok
 check add the bochs config;           mv ../bochsrc ./                                  >/dev/null 2>&1 && ok || nok
 check add the TUN config;             mv ../tunconfig ./                                >/dev/null 2>&1 && ok || nok
 check add the screen output;          mv ../out_* ./                                    >/dev/null 2>&1 && ok || nok
-check add intentionally blank file;   touch ./out_4.txt                                 >/dev/null 2>&1 && ok || nok
 check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
-#check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
+#check push to gh-pages;               push                                              >/dev/null 2>&1 && ok || nok
 )|format
