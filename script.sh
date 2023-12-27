@@ -427,7 +427,7 @@ touch out
                 -curses                   \
                 -hda qdisk.img            \
                 -M isapc                  \
-                -net nic                  \
+                -net user                  \
                 -no-reboot                \
                 -m 64                     \
                 -startdate "1994-04-21"'  \
