@@ -372,7 +372,7 @@ echo fourth boot
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
-  until egrep -q 'login:|console' out ; do
+  until grep -E -q 'login:|console' out ; do
     sleep 5;
   done
   sleep 5
@@ -417,7 +417,7 @@ exit
 # fifth boot ##############################################
 #touch out
 #(
-#  until egrep -q 'login:|console' out ; do
+#  until grep -E -q 'login:|console' out ; do
 #    sleep 5;
 #  done
 #  sleep 5
@@ -442,7 +442,7 @@ echo "fifth boot (takes hours on bochs)"
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
-  until egrep -q 'login:|console' out ; do
+  until grep -E -q 'login:|console' out ; do
     sleep 5;
   done
   sleep 5
