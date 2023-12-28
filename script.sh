@@ -415,33 +415,48 @@ echo
 qemu --help
 
 # fifth boot ##############################################
+#touch out
+#(
+#  until egrep -q 'login:|console' out ; do
+#    sleep 5;
+#  done
+#  sleep 5
+#  slowcat ./5 1 .5
+#)| TERM=vt100 script -f -c 'qemu          \
+#                -L /usr/local/share/qemu/ \
+#                -curses                   \
+#                -hda qdisk.img            \
+#                -M isapc                  \
+#                -net user                  \
+#                -no-reboot                \
+#                -m 64                     \
+#                -startdate "1994-04-21"'  \
+# |tee -a out  #                            \
+# #|tr -cd 'c'                              \
+# #|fold -w 120
+#mv out out_5.txt
+###########################################################
+
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo fifth boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
   until egrep -q 'login:|console' out ; do
     sleep 5;
   done
   sleep 5
-  slowcat ./5 1 .5
-)| TERM=vt100 script -f -c 'qemu          \
-                -L /usr/local/share/qemu/ \
-                -curses                   \
-                -hda qdisk.img            \
-                -M isapc                  \
-                -net user                  \
-                -no-reboot                \
-                -m 64                     \
-                -startdate "1994-04-21"'  \
- |tee -a out  #                            \
- #|tr -cd 'c'                              \
- #|fold -w 120
+  slowcat ./5 4 1
+)| TERM=vt100 bochs -q -f bochsrc |tee -a out 
 mv out out_5.txt
-###########################################################
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 echo;echo ====;echo;echo
 fold out_5.txt|head -150
 echo;echo ====;echo;echo
 fold out_5.txt|tail -150
 echo;echo ====;echo;echo
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 (
 check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
