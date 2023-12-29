@@ -402,17 +402,12 @@ chmod +x /buildworld_pk023.sh
 /buildworld_pk023.sh
 __EOF5__
 
-(
-check convert disk;                   qemu-img convert \
-                                              -f raw -O qcow2 disk.img qdisk.img        >/dev/null 2>&1 && ok || nok
-)|format
+#(
+#check convert disk;                   qemu-img convert \
+#                                              -f raw -O qcow2 disk.img qdisk.img        >/dev/null 2>&1 && ok || nok
+#)|format
 
-ls -l
-which script
-type script
-script --help
-echo
-qemu --help
+#qemu --help
 exit
 # fifth boot ##############################################
 #touch out
