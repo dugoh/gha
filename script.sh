@@ -224,7 +224,7 @@ check remove git tracking;       rm -rf .git                                    
 cd ..
 )|format
 
-# first boot ##########################
+# first boot ###########################
 cat >1 <<__EOF
 (echo y; echo y)|install
 __EOF
