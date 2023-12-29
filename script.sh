@@ -195,7 +195,7 @@ check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-vnc-tls \
                                              --disable-vnc-sasl \
                                              --disable-vde   --enable-debug                                 >/dev/null 2>&1 && ok || nok
-check make qemu;                 make                                                         >/qe.debug 2>&1 && ok || warn
+check make qemu;                 make                                                         >../qe.debug 2>&1 && ok || warn
 #cd i386-softmmu || exit
 #check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
  #                                    vl.o osdep.o monitor.o pci.o loader.o \
