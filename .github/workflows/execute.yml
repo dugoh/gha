@@ -11,7 +11,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install vsftpd libncursesw5-dev libtinfo-dev
+          sudo apt-get install vsftpd libncursesw5-dev libtinfo-dev gdb ltrace
       - name: Prepare script files
         run: |
            sed -i -e's/\x0D$//' ./*.sh
