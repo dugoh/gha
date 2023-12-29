@@ -2,7 +2,7 @@
 # shellcheck disable=SC2015 # if echo fails we have bigger problems
 # shellcheck disable=SC2046 # intentional golfing
 # shellcheck disable=SC2210 # files named 1 or 2confuses shellcheck
-
+date
 function check {
   echo -ne "$*\t"
 }
@@ -408,6 +408,7 @@ __EOF5__
 #)|format
 
 #qemu --help
+date
 exit
 # fifth boot ##############################################
 #touch out
