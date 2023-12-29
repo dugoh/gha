@@ -215,12 +215,12 @@ check make qemu;                 make                                           
  #                                    -lm -lrt -lpthread -lz -lutil -lncurses -ltinfo          >/dev/null 2>&1 && ok || nok
 #cd ..
 #check continue make qemu;        make                                                         >/dev/null 2>&1 && ok || nok
-check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
+#check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
 check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
-check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
-check setting qemu capabilities;       sudo setcap                                            \
-                                         CAP_NET_ADMIN,CAP_NET_RAW=eip                        \
-                                         /usr/local/bin/qemu                                  >/dev/null 2>&1 && ok || nok
+#check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
+#check setting qemu capabilities;       sudo setcap                                            \
+#                                         CAP_NET_ADMIN,CAP_NET_RAW=eip                        \
+#                                         /usr/local/bin/qemu                                  >/dev/null 2>&1 && ok || nok
 cd ..
 )|format
 
