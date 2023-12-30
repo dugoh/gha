@@ -410,43 +410,43 @@ __EOF5__
 
 #qemu --help
 date
-exit
-# fifth boot ##############################################
-#touch out
-#(
-#  until grep -E -q 'login:|console' out ; do
-#    sleep 5;
-#  done
-#  sleep 5
-#  slowcat ./5 1 .5
-#)| TERM=vt100 script -f -c 'qemu          \
-#                -L /usr/local/share/qemu/ \
-#                -curses                   \
-#                -hda qdisk.img            \
-#                -M isapc                  \
-#                -net user                  \
-#                -no-reboot                \
-#                -m 64                     \
-#                -startdate "1994-04-21"'  \
-# |tee -a out  #                            \
-# #|tr -cd 'c'                              \
-# #|fold -w 120
-#mv out out_5.txt
-###########################################################
-
-echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-echo "fifth boot (takes hours on bochs)"
-echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#exit
+fifth boot ##############################################
 touch out
 (
   until grep -E -q 'login:|console' out ; do
     sleep 5;
   done
   sleep 5
-  slowcat ./5 4 1
-)| TERM=vt100 bochs -q -f bochsrc |tee -a out 
-mv out out_5.txt
-echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  slowcat ./5 1 .5
+)| TERM=vt100 script -f -c 'qemu          \
+                -L /usr/local/share/qemu/ \
+                -curses                   \
+                -hda qdisk.img            \
+                -M isapc                  \
+                -net user                  \
+                -no-reboot                \
+                -m 64                     \
+                -startdate "1994-04-21"'  \
+ |tee -a out  #                            \
+# #|tr -cd 'c'                              \
+# #|fold -w 120
+#mv out out_5.txt
+###########################################################
+
+#echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#echo "fifth boot (takes at least 6 hours on bochs 8MB mem)"
+#echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#touch out
+#(
+#  until grep -E -q 'login:|console' out ; do
+#    sleep 5;
+#  done
+#  sleep 5
+#  slowcat ./5 4 1
+#)| TERM=vt100 bochs -q -f bochsrc |tee -a out 
+#mv out out_5.txt
+#echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 echo;echo ====;echo;echo
 fold out_5.txt|head -150
