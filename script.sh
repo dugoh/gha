@@ -189,8 +189,8 @@ check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 co
 check getting qemu source;       git clone https://github.com/qemu/qemu.git                   >/dev/null 2>&1 && ok || nok
 cd qemu || exit
 check going back to 0.11;        git reset --hard 08fd2f30bd3ee5d04596da8293689af4d4f7eb6c    >/dev/null 2>&1 && ok || nok
-#check remove definition of BIT;  sed -i -e 's/#define BIT.n. .1 << .n../\/\/&/' hw/eepro100.c >/dev/null 2>&1 && ok || nok
-#check define BIT properly;       printf "#ifndef BIT\n#define BIT(n) (1 << (n))\n#endif\n" >> qemu-common.h   && ok || nok
+check remove definition of BIT;  sed -i -e 's/#define BIT.n. .1 << .n../\/\/&/' hw/eepro100.c >/dev/null 2>&1 && ok || nok
+check define BIT properly;       printf "#ifndef BIT\n#define BIT(n) (1 << (n))\n#endif\n" >> qemu-common.h   && ok || nok
 check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
                                              --disable-vnc-tls \
@@ -216,7 +216,7 @@ check make qemu;                 make                                           
  #                                    -lm -lrt -lpthread -lz -lutil -lncurses -ltinfo          >/dev/null 2>&1 && ok || nok
 #cd ..
 #check continue make qemu;        make                                                         >/dev/null 2>&1 && ok || nok
-#check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
+check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
 check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
 #check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
 #check setting qemu capabilities;       sudo setcap                                            \
