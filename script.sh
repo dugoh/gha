@@ -3,6 +3,7 @@
 # shellcheck disable=SC2046 # intentional golfing
 # shellcheck disable=SC2210 # files named 1 or 2confuses shellcheck
 date
+s0="$(date +'%s')"
 function check {
   echo -ne "$*\t"
 }
