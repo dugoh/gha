@@ -198,7 +198,7 @@ check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-vde   --enable-debug                                 >/dev/null 2>&1 && ok || nok
 check make qemu;                 make                                                         >../qe.debug 2>&1 && ok || warn
 cd i386-softmmu || exit
-#check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
+check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
                                      vl.o osdep.o monitor.o pci.o loader.o \
                                      isa_mmio.o machine.o gdbstub.o gdbstub-xml.o \
                                      msix.o ioport.o virtio-blk.o \
