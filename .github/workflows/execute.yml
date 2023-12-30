@@ -11,8 +11,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install packages
         run: |
-          echo sudo apt-get update
-          echo sudo apt-get install vsftpd libncursesw5-dev libtinfo-dev gdb ltrace
+          sudo apt-get update
+          sudo apt-get install vsftpd libncursesw5-dev libtinfo-dev gdb ltrace
       - name: Prepare script files
         run: |
            sed -i -e's/\x0D$//' ./*.sh
