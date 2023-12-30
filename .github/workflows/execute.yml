@@ -15,7 +15,7 @@ jobs:
           echo sudo apt-get install vsftpd libncursesw5-dev libtinfo-dev gdb ltrace
       - name: Prepare script files
         run: |
-           sed -i -e's/\x0D$//' ./*.sh
+           #sed -i -e's/\x0D$//' ./*.sh
            chmod +x ./*.sh
       - name: Execute main script file
         run: |
