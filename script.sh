@@ -53,7 +53,13 @@ function index {
   echo "</ul></BODY></HTML>" >>index.html
 }
 
-# R.I.P. bochs, latest SVN, does not build anymore
+# For details on this custom qemu build, see
+# https://github.com/dugoh/gha-oldqemu
+# In short it is 0.11 patched to 
+# - build in todays Action runner
+# - run headless
+qemu_bin=https://dugoh.github.io/gha-oldqemu/qemu.tar.bz2
+# R.I.P. bochs, latest SVN, does not build anymore XXX check why
 # bochs_src=https://svn.code.sf.net/p/bochs/code/trunk
 # R.I.P. svn2github, HEAD does not build anymore and is not being updated anymore
 # 81fca4481acb6c71dfd2d9dff974bf6c36f593a1 seems to compile
@@ -187,47 +193,16 @@ check boot floppy;                     ( sudo cat "${ftproot}/${flop}";         
                                          dd if=/dev/zero bs=1 count=245760              \
                                        )>boot.img 2>/dev/null; ls boot.img              >/dev/null 2>&1 && ok || nok
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
-# 1st eyeball check till here 23/04
-true && exit 1
-# build qemu
-check getting qemu source;       git clone https://github.com/qemu/qemu.git                   >/dev/null 2>&1 && ok || nok
+check download custom qemu;            wget -q -O - "${qemu_bin}"                       \
+                                         |bunzip2 -c                                    \
+                                         |tar -xf -
 cd qemu || exit
-check going back to 0.11;        git reset --hard 08fd2f30bd3ee5d04596da8293689af4d4f7eb6c    >/dev/null 2>&1 && ok || nok
-check remove definition of BIT;  sed -i -e 's/#define BIT.n. .1 << .n../\/\/&/' hw/eepro100.c >/dev/null 2>&1 && ok || nok
-check define BIT properly;       printf "#ifndef BIT\n#define BIT(n) (1 << (n))\n#endif\n" >> qemu-common.h   && ok || nok
-check remove tty test;           sed -i "342,347d" curses.c                                   >/dev/null 2>&1 && ok || nok
-check configure qemu;            ./configure --target-list=i386-softmmu \
-                                             --disable-sdl \
-                                             --disable-vnc-tls \
-                                             --disable-vnc-sasl \
-                                             --disable-vde   --enable-debug                                 >/dev/null 2>&1 && ok || nok
-check make qemu;                 make                                                         >../qe.debug 2>&1 && ok || warn
-cd i386-softmmu || exit
-check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
-                                     vl.o osdep.o monitor.o pci.o loader.o \
-                                     isa_mmio.o machine.o gdbstub.o gdbstub-xml.o \
-                                     msix.o ioport.o virtio-blk.o \
-                                     virtio-balloon.o virtio-net.o virtio-console.o \
-                                     kvm.o kvm-all.o usb-ohci.o eepro100.o ne2000.o \
-                                     pcnet.o rtl8139.o e1000.o wdt_ib700.o \
-                                     wdt_i6300esb.o ide.o pckbd.o vga.o  sb16.o es1370.o \
-                                     ac97.o dma.o fdc.o mc146818rtc.o serial.o i8259.o \
-                                     i8254.o pcspk.o pc.o cirrus_vga.o apic.o ioapic.o \
-                                     parallel.o acpi.o piix_pci.o usb-uhci.o vmmouse.o \
-                                     vmport.o vmware_vga.o hpet.o device-hotplug.o \
-                                     pci-hotplug.o smbios.o \
-                                     -Wl,--whole-archive ../libqemu_common.a libqemu.a ../libhw64/libqemuhw64.a \
-                                     -Wl,--no-whole-archive \
-                                     -lm -lrt -lpthread -lz -lutil -lncurses -ltinfo          >/dev/null 2>&1 && ok || nok
-cd ..
-check continue make qemu;        make                                                         >/dev/null 2>&1 && ok || nok
-check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
-check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
-check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
-check setting qemu capabilities;       sudo setcap                                            \
-                                         CAP_NET_ADMIN,CAP_NET_RAW=eip                        \
-                                         /usr/local/bin/qemu                                  >/dev/null 2>&1 && ok || nok
-cd ..
+check install custom qemu;             sudo make install                                 >/dev/null 2>&1 && ok || nok
+cd .. || exit
+check test qemu;                       qemu --help                                       >/dev/null 2>&1 && ok || nok
+check setting qemu capabilities;       sudo setcap                                       \
+                                         CAP_NET_ADMIN,CAP_NET_RAW=eip                   \
+                                         /usr/local/bin/qemu                             >/dev/null 2>&1 && ok || nok
 )|format
 
 # first boot ###########################
@@ -413,10 +388,6 @@ check convert disk;                   qemu-img convert \
                                               -f raw -O qcow2 disk.img qdisk.img        >/dev/null 2>&1 && ok || nok
 )|format
 
-qemu --help
-date
-exit
-
 #fifth boot ##############################################
 touch out
 (
@@ -460,7 +431,7 @@ echo;echo ====;echo;echo
 fold out_5.txt|tail -150
 echo;echo ====;echo;echo
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+exit
 (
 check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
 check add the hard disk;              mv ../qdisk.img ./                                >/dev/null 2>&1 && ok || nok
