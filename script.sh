@@ -1,7 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC2015 # if echo fails we have bigger problems
 # shellcheck disable=SC2046 # intentional golfing
-# shellcheck disable=SC2210 # files named 1 or 2confuses shellcheck
+# shellcheck disable=SC2210 # files named 1 or 2 confuses shellcheck
 
 date
 
@@ -187,6 +187,8 @@ check boot floppy;                     ( sudo cat "${ftproot}/${flop}";         
                                          dd if=/dev/zero bs=1 count=245760              \
                                        )>boot.img 2>/dev/null; ls boot.img              >/dev/null 2>&1 && ok || nok
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
+# 1st eyeball check till here 23/04
+true && exit 1
 # build qemu
 check getting qemu source;       git clone https://github.com/qemu/qemu.git                   >/dev/null 2>&1 && ok || nok
 cd qemu || exit
