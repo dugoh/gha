@@ -66,16 +66,19 @@ qemu_bin=https://dugoh.github.io/gha-oldqemu/qemu.tar.bz2
 bochs_src=https://github.com/svn2github/bochs.git
 reset_to=81fca4481acb6c71dfd2d9dff974bf6c36f593a1
 
+# 386BSD archived files taken from TUHS
+tuhsfiles=https://github.com/dugoh/386bsd0.1/raw/master/BSD.tar.bz2
+
 wd="$(pwd)"
 ftproot=$(grep "^ftp:" /etc/passwd|cut -d ':' -f 6)
-ftpconv=$(find /etc/ -name vsftpd.conf 2>/dev/null|grep -F -v init)
+ftpconf=$(find /etc/ -name vsftpd.conf 2>/dev/null|grep -F -v init)
 flop=BSD/386bsd-0.1/bootable/dist.fs
 ip=$(ifconfig eth0|grep "inet "|awk '{print $2}')
 
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo wd = "${wd}"
 echo ftproot = "${ftproot}"
-echo ftpconv = "${ftpconv}"
+echo ftpconf = "${ftpconf}"
 echo flop = "${flop}"
 echo ip = "${ip}"
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +150,6 @@ check checking gcc;                    gcc --version                            
 check checking gcc-c++;                g++ --version                                    >/dev/null 2>&1 && ok || nok
 check checking ncurses;                ls -l /usr/include/ncurses.h                     >/dev/null 2>&1 && ok || nok
 check checking vsftpd;                 pgrep vsftpd                                     >/dev/null 2>&1 && ok || nok
-check checking 386BSD 0.1;             ls -l BSD.tar.bz2                                >/dev/null 2>&1 && ok || nok
 check getting bochs sources;           git clone "${bochs_src}"                         >/dev/null 2>&1 && ok || nok
 check checking bochs sources;          cd bochs                                         >/dev/null 2>&1 && ok || nok
 check reverting to last known good;    git reset --hard "${reset_to}"                   >/dev/null 2>&1 && ok || nok
@@ -172,8 +174,11 @@ check compressing bochs tarball;       bzip2 --best bochs.tar                   
 check setting capabilities;            sudo setcap                                      \
                                          CAP_NET_ADMIN,CAP_NET_RAW=eip                  \
                                          /usr/local/bin/bochs                           >/dev/null 2>&1 && ok || nok
-check opening anon ftp and rate limit; printf "anonymous_enable=Yes\n"                  \
-                                         |sudo tee -a "${ftpconv}"                      >/dev/null 2>&1 && ok || nok
+check fetching 386BSD 0.1              wget --no-verbose "${tuhsfiles}"                 >/dev/null 2>&1 && ok || nok
+check checking 386BSD 0.1;             ls -l BSD.tar.bz2                                >/dev/null 2>&1 && ok || nok
+check opening anon ftp;                printf "anonymous_enable=Yes\n"                  \
+                                         |sudo tee -a "${ftpconf}"                      >/dev/null 2>&1 && ok || nok
+check download distribution/patches;   wget --no-verbose "${tuhsfiles}"                 >/dev/null 2>&1 && ok || nok
 check checking ftproot;                cd "${ftproot}"                                  >/dev/null 2>&1 && ok || nok
 check extracting distribution/patches; bunzip2 -c "${wd}/BSD.tar.bz2" |sudo tar -xf -   >/dev/null 2>&1 && ok || nok
 check correct ownership;               sudo chown -R ftp:ftp "${ftproot}"               >/dev/null 2>&1 && ok || nok
@@ -182,7 +187,7 @@ check correct file permissions;        sudo chmod 644 $(sudo find "${ftproot}" -
 check correct directory permissions;   sudo chmod 555 $(sudo find "${ftproot}" -type d) >/dev/null 2>&1 && ok || nok
 check restarting vsftpd;               sudo service vsftpd restart                      >/dev/null 2>&1 && ok || nok
 check re-checking vsftpd;              pgrep vsftpd                                     >/dev/null 2>&1 && ok || nok
-check tunconfig script present;        cd "$wd" && ls tunconfig                         >/dev/null 2>&1 && ok || nok
+check tunconfig script present;        cd "${wd}" && ls tunconfig                       >/dev/null 2>&1 && ok || nok
 check find a free ip range;            sudo ifconfig| grep -F -q                        \
                                          "$(grep iptables tunconfig                     \
                                           |head -1                                      \
@@ -222,6 +227,7 @@ __EOF
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo first boot
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+touch out
 (
   until grep -E -q '#|werase' out ; do
     sleep 5
