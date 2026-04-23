@@ -183,7 +183,7 @@ check correct directory permissions;   sudo chmod 555 $(sudo find "${ftproot}" -
 check restarting vsftpd;               sudo service vsftpd restart                      >/dev/null 2>&1 && ok || nok
 check re-checking vsftpd;              pgrep vsftpd                                     >/dev/null 2>&1 && ok || nok
 check tunconfig script present;        cd "$wd" && ls tunconfig                         >/dev/null 2>&1 && ok || nok
-check checking for free range;         sudo ifconfig| grep -F -q                        \
+check find a free ip range;            sudo ifconfig| grep -F -q                        \
                                          "$(grep iptables tunconfig                     \
                                           |head -1                                      \
                                           |sed -e's/.*-d //'                            \
@@ -195,16 +195,18 @@ check boot floppy;                     ( sudo cat "${ftproot}/${flop}";         
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
 check download custom qemu;            wget -q -O - "${qemu_bin}"                       \
                                          |bunzip2 -c                                    \
-                                         |tar -xf -
+                                         |tar -xf -                                     >/dev/null 2>&1 && ok || nok
 cd qemu || exit
-check install custom qemu;             sudo make install                                 >/dev/null 2>&1 && ok || nok
+check install custom qemu;             sudo make install                                >/dev/null 2>&1 && ok || nok
 cd .. || exit
-check test qemu;                       qemu --help                                       >/dev/null 2>&1 && ok || nok
-check setting qemu capabilities;       sudo setcap                                       \
-                                         CAP_NET_ADMIN,CAP_NET_RAW=eip                   \
+check test qemu;                       qemu --help                                      >/dev/null 2>&1 && ok || nok
+check setting qemu capabilities;       sudo setcap                                      \
+                                         CAP_NET_ADMIN,CAP_NET_RAW=eip                  \
                                          /usr/local/bin/qemu                             >/dev/null 2>&1 && ok || nok
 )|format
-
+echo .
+echo .
+exit
 # first boot ###########################
 cat >1 <<__EOF
 (echo y; echo y)|install
