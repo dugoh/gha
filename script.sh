@@ -174,7 +174,7 @@ check compressing bochs tarball;       bzip2 --best bochs.tar                   
 check setting capabilities;            sudo setcap                                      \
                                          CAP_NET_ADMIN,CAP_NET_RAW=eip                  \
                                          /usr/local/bin/bochs                           >/dev/null 2>&1 && ok || nok
-check fetching 386BSD 0.1              wget --no-verbose "${tuhsfiles}"                 >/dev/null 2>&1 && ok || nok
+check fetching 386BSD 0.1;             wget --no-verbose "${tuhsfiles}"                 >/dev/null 2>&1 && ok || nok
 check checking 386BSD 0.1;             ls -l BSD.tar.bz2                                >/dev/null 2>&1 && ok || nok
 check opening anon ftp;                printf "anonymous_enable=Yes\n"                  \
                                          |sudo tee -a "${ftpconf}"                      >/dev/null 2>&1 && ok || nok
