@@ -339,6 +339,7 @@ mv patch dist
 cd dist/bin
 ./mkpatchdirs
 (echo y; echo; echo; echo IALL; echo y ; echo ; echo q)|./patches
+echo ./patches done .. starting afterinstall
 ./afterinstall.sh
 rm -r /sys/compile/*
 cd /sys/i386/conf
@@ -395,7 +396,9 @@ check convert disk;                   qemu-img convert \
                                               -f raw -O qcow2 disk.img qdisk.img        >/dev/null 2>&1 && ok || nok
 )|format
 
-#fifth boot ##############################################
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo almost fifth boot .. but just the start
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
   until grep -E -q 'login:|console' out ; do
