@@ -178,6 +178,9 @@ check fetching 386BSD 0.1;             wget --no-verbose "${tuhsfiles}"         
 check checking 386BSD 0.1;             ls -l BSD.tar.bz2                                >/dev/null 2>&1 && ok || nok
 check opening anon ftp;                printf "anonymous_enable=Yes\n"                  \
                                          |sudo tee -a "${ftpconf}"                      >/dev/null 2>&1 && ok || nok
+                                         pwd
+                                         echo $wd
+                                         ls -l
 check download distribution/patches;   wget --no-verbose "${tuhsfiles}"                 >/dev/null 2>&1 && ok || nok
 check checking ftproot;                cd "${ftproot}"                                  >/dev/null 2>&1 && ok || nok
 check extracting distribution/patches; bunzip2 -c "${wd}/BSD.tar.bz2" |sudo tar -xf -   >/dev/null 2>&1 && ok || nok
