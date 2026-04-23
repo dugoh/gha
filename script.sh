@@ -210,15 +210,6 @@ check setting qemu capabilities;       sudo setcap                              
                                          /usr/local/bin/qemu                             >/dev/null 2>&1 && ok || nok
 )|format
 
-# dbg
-echo .
-echo .
-cd qemu || exit
-sudo make install
-exit
-# /dbg
-
-
 # first boot ###########################
 cat >1 <<__EOF
 (echo y; echo y)|install
