@@ -1,11 +1,12 @@
-#name: Debug
-#on: [push]
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/checkout@v6
-#    - name: Setup upterm session
-#      uses: lhotari/action-upterm@v1
-#      with:
-#        limit-access-to-actor: false
+name: Debug
+on: [push]
+jobs:
+  build:
+    if: false  # skips the entire job for now
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+      with:
+        limit-access-to-actor: false
