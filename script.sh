@@ -202,27 +202,20 @@ check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 co
 check download custom qemu;            wget -q -O - "${qemu_bin}"                       \
                                          |bunzip2 -c                                    \
                                          |tar -xf -                                     >/dev/null 2>&1 && ok || nok
-pwd                                         
-
-)|format
-
-pwd
 cd qemu || exit
-pwd
-#check install custom qemu;             sudo make install                                >/dev/null 2>&1 && ok || nok
-ls -l rules.mak
-sudo make install
-ls -ltr |tail -10
-cat makeoutput.txt 
+check fix SRC_PATH                     sed -i -e "s@SR.*@SRC_PATH=`pwd`@" config-*.mak  >/dev/null 2>&1 && ok || nok
+check dump hardcoded symlinks          rm ./libhw*/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
+check retarget makefile                ln -s `pwd`/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
+check retarget hw makefiles            ln -s `pwd`/Makefile.hw ./libhw32/Makefile \
+                                         && ln -s `pwd`/Makefile.hw ./libhw64/Makefile  >/dev/null 2>&1 && ok || nok
+check install custom qemu;             sudo make install                                >/dev/null 2>&1 && ok || nok
 cd .. || exit
-#check test qemu;                       qemu --help                                      >/dev/null 2>&1 && ok || nok
-qemu --help
-find ./ -type f -name qemu
+check test qemu;                       qemu --help                                      >/dev/null 2>&1 && ok || nok
 check setting qemu capabilities;       sudo setcap                                      \
                                          CAP_NET_ADMIN,CAP_NET_RAW=eip                  \
                                          /usr/local/bin/qemu                             >/dev/null 2>&1 && ok || nok
-#)|format
-exit
+)|format
+
 # first boot ###########################
 cat >1 <<__EOF
 (echo y; echo y)|install
