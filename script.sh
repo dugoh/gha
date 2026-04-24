@@ -210,6 +210,7 @@ pwd
 cd qemu || exit
 pwd
 #check install custom qemu;             sudo make install                                >/dev/null 2>&1 && ok || nok
+ls -l rules.mak
 sudo make install
 ls -ltr |tail -10
 cat makeoutput.txt 
