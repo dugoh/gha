@@ -202,8 +202,13 @@ check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 co
 check download custom qemu;            wget -q -O - "${qemu_bin}"                       \
                                          |bunzip2 -c                                    \
                                          |tar -xf -                                     >/dev/null 2>&1 && ok || nok
-cd qemu || exit
+pwd                                         
+
 )|format
+
+pwd
+cd qemu || exit
+pwd
 #check install custom qemu;             sudo make install                                >/dev/null 2>&1 && ok || nok
 sudo make install
 ls -ltr |tail -10
