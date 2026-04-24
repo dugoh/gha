@@ -203,10 +203,10 @@ check download custom qemu;            wget -q -O - "${qemu_bin}"               
                                          |bunzip2 -c                                    \
                                          |tar -xf -                                     >/dev/null 2>&1 && ok || nok
 cd qemu || exit
-check fix SRC_PATH                     sed -i -e "s@SR.*@SRC_PATH=`pwd`@" config-*.mak  >/dev/null 2>&1 && ok || nok
-check dump hardcoded symlinks          rm ./libhw*/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
-check retarget makefile                ln -s `pwd`/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
-check retarget hw makefiles            ln -s `pwd`/Makefile.hw ./libhw32/Makefile \
+check fix SRC_PATH;                    sed -i -e "s@SR.*@SRC_PATH=`pwd`@" config-*.mak  >/dev/null 2>&1 && ok || nok
+check dump hardcoded symlinks;         rm ./libhw*/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
+check retarget makefile;               ln -s `pwd`/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
+check retarget hw makefiles;           ln -s `pwd`/Makefile.hw ./libhw32/Makefile \
                                          && ln -s `pwd`/Makefile.hw ./libhw64/Makefile  >/dev/null 2>&1 && ok || nok
 check install custom qemu;             sudo make install                                >/dev/null 2>&1 && ok || nok
 cd .. || exit
