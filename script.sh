@@ -203,6 +203,8 @@ cd /tmp || exit 1
 check download custom qemu;            wget -q -O - "${qemu_bin}"                       \
                                          |bunzip2 -c                                    \
                                          |tar -xf -                                     >/dev/null 2>&1 && ok || nok
+pwd
+ls -ltr
 cd qemu || exit 1
 check install custom qemu;             sudo make install      2>&1 |tee /tmp/makeout       #                   >/dev/null 2>&1 && ok || nok
 cd "${wd}" || exit 1
