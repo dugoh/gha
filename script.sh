@@ -214,6 +214,10 @@ check setting qemu capabilities;       sudo setcap                              
                                          /usr/local/bin/qemu                             >/dev/null 2>&1 && ok || nok
 )|format
 cat /tmp/makeout
+wget -q -O - "${qemu_bin}"                       \
+                                         |bunzip2 -c                                    \
+                                         |tar -tvf -
+echo .
 exit
 # first boot ###########################
 cat >1 <<__EOF
