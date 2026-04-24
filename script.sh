@@ -199,17 +199,13 @@ check boot floppy;                     ( sudo cat "${ftproot}/${flop}";         
                                          dd if=/dev/zero bs=1 count=245760              \
                                        )>boot.img 2>/dev/null; ls boot.img              >/dev/null 2>&1 && ok || nok
 check creating empty disk;             dd if=/dev/zero of=disk.img bs=1048576 count=504 >/dev/null 2>&1 && ok || nok
+cd /tmp || exit 1
 check download custom qemu;            wget -q -O - "${qemu_bin}"                       \
                                          |bunzip2 -c                                    \
                                          |tar -xf -                                     >/dev/null 2>&1 && ok || nok
-cd qemu || exit
-check fix SRC_PATH;                    sed -i -e "s@SR.*@SRC_PATH=`pwd`@" config-*.mak  >/dev/null 2>&1 && ok || nok
-check dump hardcoded symlinks;         rm ./libhw*/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
-check retarget makefile;               ln -s `pwd`/Makefile ./i386-softmmu/Makefile     >/dev/null 2>&1 && ok || nok
-check retarget hw makefiles;           ln -s `pwd`/Makefile.hw ./libhw32/Makefile \
-                                         && ln -s `pwd`/Makefile.hw ./libhw64/Makefile  >/dev/null 2>&1 && ok || nok
+cd qemu || exit 1
 check install custom qemu;             sudo make install      2>&1 |tee /tmp/makeout       #                   >/dev/null 2>&1 && ok || nok
-cd .. || exit
+cd "${wd}" || exit 1
 check test qemu;                       qemu --help                                      >/dev/null 2>&1 && ok || nok
 check setting qemu capabilities;       sudo setcap                                      \
                                          CAP_NET_ADMIN,CAP_NET_RAW=eip                  \
