@@ -398,7 +398,7 @@ check convert disk;                   qemu-img convert \
 )|format
 
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-echo almost fifth boot .. but just the start
+echo fifth boot
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
@@ -412,38 +412,103 @@ touch out
                 -curses                   \
                 -hda qdisk.img            \
                 -M isapc                  \
-                -net user                  \
+                -net user                 \
                 -no-reboot                \
                 -m 64                     \
                 -startdate "1994-04-21"'  \
- |tee -a out  #                            \
-# #|tr -cd 'c'                              \
-# #|fold -w 120
-#mv out out_5.txt
-###########################################################
-
-#echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#echo "fifth boot (takes at least 6 hours on bochs 8MB mem)"
-#echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#touch out
-#(
-#  until grep -E -q 'login:|console' out ; do
-#    sleep 5;
-#  done
-#  sleep 5
-#  slowcat ./5 4 1
-#)| TERM=vt100 bochs -q -f bochsrc |tee -a out 
-#mv out out_5.txt
-#echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-echo;echo ====;echo;echo
-fold out_5.txt|head -150
-echo;echo ====;echo;echo
-fold out_5.txt|tail -150
-echo;echo ====;echo;echo
+  |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown"
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-exit
+echo
+mv out out_5.txt
+
+cat >6 <<"__EOF6__"
+root
+
+exec sh
+sed -e 's/pk023.tar/pk023024.tar/' /to_pk023.sh >/to_pk024.sh
+chmod +x /to_pk024.sh
+/to_pk024.sh
+__EOF6__
+
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo sixth boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+touch out
 (
+  until egrep -q 'login:|console' out ; do
+    sleep 5;
+  done
+  sleep 5
+  slowcat ./6 1 .5
+)| TERM=vt100 script -f -c 'qemu          \
+                -L /usr/local/share/qemu/ \
+                -curses                   \
+                -hda qdisk.img            \
+                -M isapc                  \
+                -net nic                  \
+                -no-reboot                \
+                -m 64                     \
+                -startdate "1994-04-22"'  \
+ |tee -a out                              \
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo
+mv out out_6.txt
+
+cat >7 <<"__EOF7__"
+root
+
+exec sh
+/buildworld_pk023.sh
+__EOF7__
+
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo seventh boot
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+touch out
+(
+  until egrep -q 'login:|console' out ; do
+    sleep 5;
+  done
+  sleep 5
+  slowcat ./7 1 .5
+)| TERM=vt100 script -f -c 'qemu          \
+                -L /usr/local/share/qemu/ \
+                -curses                   \
+                -hda qdisk.img            \
+                -M isapc                  \
+                -net nic                  \
+                -no-reboot                \
+                -m 64                     \
+                -startdate "1994-04-23"'  \
+ |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown"
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo
+mv out out_7.txt
+
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo eight boot (repeat seventh for good meassure)
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+touch out
+(
+  until egrep -q 'login:|console' out ; do
+    sleep 5;
+  done
+  sleep 5
+  slowcat ./7 1 .5
+)| TERM=vt100 script -f -c 'qemu          \
+                -L /usr/local/share/qemu/ \
+                -curses                   \
+                -hda qdisk.img            \
+                -M isapc                  \
+                -net nic                  \
+                -no-reboot                \
+                -m 64                     \
+                -startdate "1994-04-24"'  \
+ |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown"
+echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+echo
+mv out out_8.txt
+(\
 check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
 check add the hard disk;              mv ../qdisk.img ./                                >/dev/null 2>&1 && ok || nok
 check compress the disk;              bzip2 --best qdisk.img                            >/dev/null 2>&1 && ok || nok
