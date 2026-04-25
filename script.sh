@@ -115,7 +115,6 @@ com1: enabled=0
 clock: time0=740756888
 __EOF
 
-
 # usr/src/sys.386bsd/i386/isa/clock.c suffers from a Y2K bug.
 # Setting the time to the current date results in timestamps set to to 1970.
 #
@@ -129,7 +128,7 @@ __EOF
 
 # In this build 386bsd 0.1 as released is installed and the 2 patch kits
 # are placed on the filesystem for later use, hence the choice for 740756888.
-# After every boot this is incremented with 2 hours. This is done so the
+# After every subsequent boot this is incremented. This is done so the
 # arrow of time doesn't look broken.
 
 cat >tunconfig <<"__EOF"
@@ -236,9 +235,7 @@ echo
 check add 2 hours to clock;           sed -i -e "s/740756888/740764088/" bochsrc              >/dev/null 2>&1 && ok || nok
 )|format
 echo
-######################################
 
-# second boot ########################
 cat >2 <<__EOF
 echo "machine ${ip}" >.netrc
 echo "login ftp" >>.netrc
@@ -286,10 +283,7 @@ mv out out_2.txt
 (
 check add 2 hours to clock;           sed -i -e "s/740764088/740771288/" bochsrc      >/dev/null 2>&1 && ok || nok
 )|format
-######################################
 
-
-# third boot #########################
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo third boot
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,33 +295,8 @@ mv out out_3.txt
 
 (
 check add 2 hours to clock;           sed -i -e "s/740771288/740778488/" bochsrc        >/dev/null 2>&1 && ok || nok
-#check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
-#check add bochs;                      mv ../bochs/bochs.tar.bz2 ./                      >/dev/null 2>&1 && ok || nok
-#check add the hard disk;              mv ../disk.img ./                                 >/dev/null 2>&1 && ok || nok
-#check compress the disk;              bzip2 --best disk.img                             >/dev/null 2>&1 && ok || nok
-#check split the disk in parts;        split -b 50m "disk.img.bz2" "disk.part-"          >/dev/null 2>&1 && ok || nok
-#check remove the unsplit disk;        rm disk.img.bz2                                   >/dev/null 2>&1 && ok || nok
-#check add the floppy disk;            mv ../boot.img ./                                 >/dev/null 2>&1 && ok || nok
-#check add the bochs config;           mv ../bochsrc ./                                  >/dev/null 2>&1 && ok || nok
-#check add the TUN config;             mv ../tunconfig ./                                >/dev/null 2>&1 && ok || nok
-#check add the screen output;          mv ../out_* ./                                    >/dev/null 2>&1 && ok || nok
-#check add intentionally blank file;   touch ./out_4.txt                                 >/dev/null 2>&1 && ok || nok
-#check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
-#check push to gh-pages;               push                                              >../outf 2>&1 && ok || nok
 )|format
 
-# # a second third boot (fsck due to clock shift) #############
-# echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# echo a second third boot
-# echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# touch out
-# (sleep 30; echo)|TERM=vt100 bochs -q -f bochsrc |tee -a out
-# echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# echo
-# mv out out_3b.txt
-###########################################################
-
-# fourth boot #############################################
 cat >4 <<"__EOF4__"
 root
 
@@ -371,7 +340,6 @@ touch out
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_4.txt
-###########################################################
 
 (
 check add 2 hours to clock;           sed -i -e's/time0=.*/time0=735335193/' bochsrc    >/dev/null 2>&1 && ok || nok
@@ -417,7 +385,7 @@ touch out
                 -m 64                     \
                 -startdate "1994-04-21"'  \
  |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown" \
-   sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
+   |sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_5.txt
@@ -482,7 +450,7 @@ touch out
                 -m 64                     \
                 -startdate "1994-04-23"'  \
  |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown" \
-   sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
+   |sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_7.txt
@@ -507,11 +475,12 @@ touch out
                 -m 64                     \
                 -startdate "1994-04-24"'  \
  |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown" \
-   sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
+   |sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_8.txt
-(\
+
+(
 check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
 check add the hard disk;              mv ../qdisk.img ./                                >/dev/null 2>&1 && ok || nok
 check compress the disk;              bzip2 --best qdisk.img                            >/dev/null 2>&1 && ok || nok
@@ -522,5 +491,4 @@ check add the bochs config;           mv ../bochsrc ./                          
 check add the TUN config;             mv ../tunconfig ./                                >/dev/null 2>&1 && ok || nok
 check add the screen output;          mv ../out_* ./                                    >/dev/null 2>&1 && ok || nok
 check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
-#check push to gh-pages;               push                                              >/dev/null 2>&1 && ok || nok
 )|format
