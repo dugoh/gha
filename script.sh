@@ -203,22 +203,17 @@ cd /tmp || exit 1
 check download custom qemu;            wget -q -O - "${qemu_bin}"                       \
                                          |bunzip2 -c                                    \
                                          |tar -xf -                                     >/dev/null 2>&1 && ok || nok
-pwd
-ls -ltr
 cd qemu || exit 1
-check install custom qemu;             sudo make install      2>&1 |tee /tmp/makeout       #                   >/dev/null 2>&1 && ok || nok
+check install custom qemu;             sudo make install                                >/dev/null 2>&1 && ok || nok
 cd "${wd}" || exit 1
 check test qemu;                       qemu --help                                      >/dev/null 2>&1 && ok || nok
 check setting qemu capabilities;       sudo setcap                                      \
                                          CAP_NET_ADMIN,CAP_NET_RAW=eip                  \
                                          /usr/local/bin/qemu                             >/dev/null 2>&1 && ok || nok
 )|format
-cat /tmp/makeout
-wget -q -O - "${qemu_bin}"                       \
-                                         |bunzip2 -c                                    \
-                                         |tar -tvf -
 echo ...
 exit
+
 # first boot ###########################
 cat >1 <<__EOF
 (echo y; echo y)|install
