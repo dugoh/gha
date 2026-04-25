@@ -2,10 +2,9 @@
 # shellcheck disable=SC2015 # if echo fails we have bigger problems
 # shellcheck disable=SC2046 # intentional golfing
 # shellcheck disable=SC2210 # files named 1 or 2 confuses shellcheck
+# shellcheck disable=SC1004 # backslash+linefeed is processed again later
+# shellcheck disable=SC2196 # yeah, yeah .. egrep is non-standard and deprecated
 
-date
-
-s0="$(date +'%s')"
 function check {
   echo -ne "$*\t"
 }
@@ -76,6 +75,7 @@ flop=BSD/386bsd-0.1/bootable/dist.fs
 ip=$(ifconfig eth0|grep "inet "|awk '{print $2}')
 
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+date
 echo wd = "${wd}"
 echo ftproot = "${ftproot}"
 echo ftpconf = "${ftpconf}"
@@ -416,7 +416,8 @@ touch out
                 -no-reboot                \
                 -m 64                     \
                 -startdate "1994-04-21"'  \
-  |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown"
+ |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown" \
+   sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_5.txt
@@ -480,13 +481,14 @@ touch out
                 -no-reboot                \
                 -m 64                     \
                 -startdate "1994-04-23"'  \
- |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown"
+ |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown" \
+   sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_7.txt
 
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-echo eight boot (repeat seventh for good meassure)
+echo eight boot .. repeat seventh boot for good meassure
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 touch out
 (
@@ -504,7 +506,8 @@ touch out
                 -no-reboot                \
                 -m 64                     \
                 -startdate "1994-04-24"'  \
- |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown"
+ |tee -a out  |sed -e's/rm -rf.*//' -e's/.*===>/===>/' | egrep "Lynne|===>|hutdown" \
+   sed -e's/.\[.*//' -e's/ *$//' -e's/..8A..m...8B//' |grep .
 echo %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 echo
 mv out out_8.txt
