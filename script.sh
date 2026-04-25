@@ -217,7 +217,7 @@ cat /tmp/makeout
 wget -q -O - "${qemu_bin}"                       \
                                          |bunzip2 -c                                    \
                                          |tar -tvf -
-echo .
+echo ...
 exit
 # first boot ###########################
 cat >1 <<__EOF
