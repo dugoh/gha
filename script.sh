@@ -233,6 +233,7 @@ echo
 
 (
 check add 2 hours to clock;           sed -i -e "s/740756888/740764088/" bochsrc              >/dev/null 2>&1 && ok || nok
+copy preliminary disk;                cp disk.img pdisk.img                                   >/dev/null 2>&1 && ok || nok
 )|format
 echo
 
@@ -481,14 +482,16 @@ echo
 mv out out_8.txt
 
 (
-check creating gh-pages;              mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
-check add the hard disk;              mv ../qdisk.img ./                                >/dev/null 2>&1 && ok || nok
-check compress the disk;              bzip2 --best qdisk.img                            >/dev/null 2>&1 && ok || nok
-check split the disk in parts;        split -b 50m "qdisk.img.bz2" "qdisk.part-"        >/dev/null 2>&1 && ok || nok
-check remove the unsplit disk;        rm qdisk.img.bz2                                  >/dev/null 2>&1 && ok || nok
-check add the floppy disk;            mv ../boot.img ./                                 >/dev/null 2>&1 && ok || nok
-check add the bochs config;           mv ../bochsrc ./                                  >/dev/null 2>&1 && ok || nok
-check add the TUN config;             mv ../tunconfig ./                                >/dev/null 2>&1 && ok || nok
-check add the screen output;          mv ../out_* ./                                    >/dev/null 2>&1 && ok || nok
-check create an index page;           index                                             >/dev/null 2>&1 && ok || nok
+check creating gh-pages;               mkdir gh-pages ; cd gh-pages                      >/dev/null 2>&1 && ok || nok
+check add the hard disk;               mv ../qdisk.img ./                                >/dev/null 2>&1 && ok || nok
+check compress the disk;               bzip2 --best qdisk.img                            >/dev/null 2>&1 && ok || nok
+check add the preliminary disk;        mv ../pdisk.img ./                                >/dev/null 2>&1 && ok || nok
+check compress preliminary disk;       bzip2 --best pdisk.img                            >/dev/null 2>&1 && ok || nok
+check split the disk in parts;         split -b 50m "qdisk.img.bz2" "qdisk.part-"        >/dev/null 2>&1 && ok || nok
+check remove the unsplit disk;         rm qdisk.img.bz2                                  >/dev/null 2>&1 && ok || nok
+check add the floppy disk;             mv ../boot.img ./                                 >/dev/null 2>&1 && ok || nok
+check add the bochs config;            mv ../bochsrc ./                                  >/dev/null 2>&1 && ok || nok
+check add the TUN config;              mv ../tunconfig ./                                >/dev/null 2>&1 && ok || nok
+check add the screen output;           mv ../out_* ./                                    >/dev/null 2>&1 && ok || nok
+check create an index page;            index                                             >/dev/null 2>&1 && ok || nok
 )|format
